@@ -1,5 +1,6 @@
 import os
 import sys
+import random
 
 __author__ = "Mostafa Rafaie"
 __license__ = "APLv2"
@@ -31,3 +32,13 @@ class GenomStruct:
                 self.chromosomes_structs[i] = ChromosomesStruct(l[0], l[1],
                                                                 l[2], l[3],
                                                                 l[4])
+
+    def rand(self, i):
+        cs = self.chromosomes_structs[i]
+
+        if cs.is_fixed is True:
+            return None
+
+        p = 1 if cs.floating_point == 0 else cs.floating_point * 10
+        return random.randint(cs.min_value * p,
+                              cs.max_value * p) / p
