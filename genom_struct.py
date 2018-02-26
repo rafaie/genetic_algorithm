@@ -1,3 +1,7 @@
+"""
+genom_struct.py: the base structure to keep genom infrustructure.
+
+"""
 import os
 import sys
 import random
@@ -15,6 +19,15 @@ class ChromosomesStruct:
         self.floating_point = floating_point
         self.is_fixed = is_fixed
 
+    def __repr__(self):
+        return self.__str__()
+
+    def __str__(self):
+        return "ChromosomesStruct, name={}, min_value={}, max_value={}" \
+                .format(self.name, self.min_value, self.max_value) + \
+               ", floating_point={}, is_fixed={}".format(self.floating_point,
+                                                         self.is_fixed)
+
 
 class GenomStruct:
     def __init__(self, path):
@@ -23,22 +36,21 @@ class GenomStruct:
                    format(path))
             sys.exit(1)
 
-        self.chromosomes_structs = []
+        self.cs = []
 
         with open(path, 'r') as fi:
-            lines = fi.readline()
-            for i in range(len(lines)):
-                l = lines[i].split(',')
-                self.chromosomes_structs[i] = ChromosomesStruct(l[0], l[1],
-                                                                l[2], l[3],
-                                                                l[4])
+            for line in fi.readlines():
+                l = line.strip().split(',')
+                self.cs.append(ChromosomesStruct(l[0], float(l[1]),
+                                                 float(l[2]), float(l[3]),
+                                                 bool(int(l[4]))))
 
     def rand(self, i):
-        cs = self.chromosomes_structs[i]
+        cs_temp = self.cs[i]
 
-        if cs.is_fixed is True:
+        if cs_temp.is_fixed is True:
             return None
 
-        p = 1 if cs.floating_point == 0 else cs.floating_point * 10
-        return random.randint(cs.min_value * p,
-                              cs.max_value * p) / p
+        p = 1 if cs_temp.floating_point == 0 else cs_temp.floating_point * 10
+        return random.randint(cs_temp.min_value * p,
+                              cs_temp.max_value * p) / p
