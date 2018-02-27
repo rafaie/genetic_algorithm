@@ -51,6 +51,11 @@ class GenomStruct:
         if cs_temp.is_fixed is True:
             return None
 
-        # p = 1 if cs_temp.floating_point == 0 else cs_temp.floating_point * 10
         return round(random.uniform(cs_temp.min_value, cs_temp.max_value),
                      cs_temp.floating_point)
+
+    def random_genom(self):
+        genom = []
+        for i in range(len(self.cs)):
+            genom.append(self.rand(i))
+        return genom
