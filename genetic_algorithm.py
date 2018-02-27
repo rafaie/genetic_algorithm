@@ -4,6 +4,8 @@ genetic_algorithm.py: the base genetic_algorithm class.
 """
 
 from genom_struct import GenomStruct
+from numpy import np
+import logging
 
 
 __author__ = "Mostafa Rafaie"
@@ -11,6 +13,7 @@ __license__ = "APLv2"
 
 
 class GeneticAlgorithm:
+    LOGGER_HANDLER_NAME = 'GA_LOG_HANDLER'
 
     # Cross Over Types
     SINGLE_POINT_CROSSOVER = 1
@@ -18,67 +21,81 @@ class GeneticAlgorithm:
     CUT_SLICE_CROSSOVER = 3
     UNIFORM_CROSSOVER = 4
 
-    def __init__(self, path):
+    def __init__(self, path, log_level=None):
         self.path = path
         self.gs = GenomStruct(path)
-
-        pass
+        self.logger = logging.getLogger(__name__)
+        if log_level is not None:
+            self.logger.setLevel(log_level)
 
     # Cross Over functions
-    def do_crossover_single_point(self, type, genom1, genom2, verbose=False):
+    def do_crossover_single_point(self, type, genom1, genom2):
         pass
 
-    def do_crossover_two_point(self, type, genom1, genom2, verbose=False):
+    def do_crossover_two_point(self, type, genom1, genom2):
         pass
 
-    def do_crossover_cut_slice(self, type, genom1, genom2, verbose=False):
+    def do_crossover_cut_slice(self, type, genom1, genom2):
         pass
 
-    def do_crossover_uniform(self, type, genom1, genom2, verbose=False):
+    def do_crossover_uniform(self, type, genom1, genom2):
         pass
 
-    def do_crossover(self, type, genom1, genom2, verbose=False):
+    def do_crossover(self, type, genom1, genom2):
         pass
 
     # Run the GA Algorithem
-    def init_generation(self, init_population_size, verbose=False):
+    def init_generation(self, init_population_size):
+        self.logger.info('init_generation is started running')
+
+        population = []
+        for i in range(init_population_size):
+            population.append([self.gs.random_genom(), 0])
+
+        # if verbose is True:
+        self.logger.info('initialize the genration with the size of {}'.
+                         format(len(population)))
+
+        return population
+
+    def init_ga(self, init_population_size, path=None):
+        if path is not None:
+            self.gs = GenomStruct(path)
+
+        return self.init_generation(init_population_size)
+
+    def calc_fitness(self, population, fitness, cuncurrency):
         pass
 
-    def init_ga(self, init_population_size, path=None, verbose=False):
+    def check_stop_condition(self, population, num_iteratitions, iteratition):
         pass
 
-    def calc_fitness(self, population, fitness, cuncurrency, verbose=False):
+    def choose_best_population(self, population, population_size):
         pass
 
-    def check_stop_condition(self, population, num_iteratitions, iteratition,
-                             verbose=False):
-        pass
-
-    def choose_best_population(self, population, population_size, verbose):
+    def gen_next_generation(self, population_size, mutation_rate,
+                            crossover_type, cuncurrency, fitness):
         pass
 
     def run(self, fitness, cuncurrency, init_population_size, population_size,
-            mutation_rate, num_iteratitions, crossover_type, path=None,
-            verbose=False):
+            mutation_rate, num_iteratitions, crossover_type, path=None):
 
         iteratition = 0
-        population = self.init_ga(init_population_size, path, verbose)
-        self.calc_fitness(population, fitness, cuncurrency, verbose)
+        population = self.init_ga(init_population_size, path)
+        self.calc_fitness(population, fitness, cuncurrency)
 
         population = self.choose_best_population(population,
-                                                 population_size,
-                                                 verbose)
+                                                 population_size)
 
         while self.check_stop_condition(population, num_iteratitions,
-                                        iteratition, verbose):
+                                        iteratition):
 
-            population = self.gen_next_population(population_size,
+            population = self.gen_next_generation(population_size,
                                                   mutation_rate,
                                                   crossover_type,
                                                   cuncurrency,
                                                   fitness)
 
             population = self.choose_best_population(population,
-                                                     population_size,
-                                                     verbose)
+                                                     population_size)
         return population
