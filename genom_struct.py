@@ -42,7 +42,7 @@ class GenomStruct:
             for line in fi.readlines():
                 l = line.strip().split(',')
                 self.cs.append(ChromosomesStruct(l[0], float(l[1]),
-                                                 float(l[2]), float(l[3]),
+                                                 float(l[2]), int(l[3]),
                                                  bool(int(l[4]))))
 
     def rand(self, i):
@@ -51,6 +51,6 @@ class GenomStruct:
         if cs_temp.is_fixed is True:
             return None
 
-        p = 1 if cs_temp.floating_point == 0 else cs_temp.floating_point * 10
-        return random.randint(cs_temp.min_value * p,
-                              cs_temp.max_value * p) / p
+        # p = 1 if cs_temp.floating_point == 0 else cs_temp.floating_point * 10
+        return round(random.uniform(cs_temp.min_value, cs_temp.max_value),
+                     cs_temp.floating_point)
