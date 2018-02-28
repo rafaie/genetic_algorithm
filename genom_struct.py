@@ -59,3 +59,9 @@ class GenomStruct:
         for i in range(len(self.cs)):
             genom.append(self.rand(i))
         return genom
+
+    def size(self):
+        return len(self.cs)
+
+    def name(self):
+        return [c.name for c in self.cs]
