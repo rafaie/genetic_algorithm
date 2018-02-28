@@ -18,11 +18,11 @@ class GenomStructTest(unittest.TestCase):
 
         gs = GenomStruct(path)
 
-        self.assertEqual(len(gs.cs), 8)
-        self.assertAlmostEqual(gs.cs[3].name, 'q4')
-        self.assertAlmostEqual(gs.cs[3].min_value, 1)
-        self.assertAlmostEqual(gs.cs[3].max_value, 8)
-        self.assertAlmostEqual(gs.cs[5].is_fixed, False)
+        self.assertEqual(len(gs.cs), 5)
+        self.assertAlmostEqual(gs.cs[3].name, 'v4')
+        self.assertAlmostEqual(gs.cs[3].min_value, -100)
+        self.assertAlmostEqual(gs.cs[3].max_value, 100)
+        self.assertAlmostEqual(gs.cs[2].is_fixed, False)
 
         r = gs.rand(2)
         self.assertGreaterEqual(r, gs.cs[2].min_value)

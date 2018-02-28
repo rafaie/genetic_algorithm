@@ -58,7 +58,6 @@ class GeneticAlgorithm:
 
         population = np.array(p)
 
-        # if verbose is True:
         self.logger.info('initialize the genration with the size of {}'.
                          format(len(population)))
 

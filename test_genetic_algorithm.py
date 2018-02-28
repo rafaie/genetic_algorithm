@@ -24,4 +24,4 @@ class GeneticAlgorithmTest(unittest.TestCase):
         self.assertEqual(len(population), init_population_size)
         self.assertEqual(len(np.unique(population, axis=0)),
                          init_population_size)
-        self.assertEqual(population[1, 8], 0)
+        self.assertEqual(population[1, 5], 0)
