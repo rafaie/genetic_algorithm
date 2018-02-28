@@ -27,7 +27,7 @@ handlers:
     encoding: utf8
 
 loggers:
-  GA:
+  GA_LOG_HANDLER:
     level: DEBUG
     handlers: [file, error_file]
     propagate: no
