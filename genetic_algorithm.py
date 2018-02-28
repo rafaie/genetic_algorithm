@@ -22,15 +22,21 @@ class GeneticAlgorithm:
     CUT_SLICE_CROSSOVER = 2
     UNIFORM_CROSSOVER = 3
 
-    CROSSOVER_FUNCTIONS=[do_crossover_single_point, do_crossover_two_point
-                         do_crossover_cut_slice, do_crossover_uniform]
-
     def __init__(self, path, log_level=None):
         self.path = path
         self.gs = GenomStruct(path)
         self.logger = logging.getLogger(__name__)
         if log_level is not None:
             self.logger.setLevel(log_level)
+
+        self.CROSSOVER_FUNCTIONS = {GeneticAlgorithm.SINGLE_POINT_CROSSOVER:
+                                    self.do_crossover_single_point,
+                                    GeneticAlgorithm.TWO_POINT_CROSSOVER:
+                                    self.do_crossover_two_point,
+                                    GeneticAlgorithm.CUT_SLICE_CROSSOVER:
+                                    self.do_crossover_cut_slice,
+                                    GeneticAlgorithm.UNIFORM_CROSSOVER:
+                                    self.do_crossover_uniform}
 
     # Cross Over functions
     def do_crossover_single_point(self, genom1, genom2):
@@ -48,7 +54,7 @@ class GeneticAlgorithm:
     def do_crossover_cut_slice(self, genom1, genom2):
         c1 = random.randrange(0, self.gs.size() - 1)
         c2 = random.randrange(0, self.gs.size() - 1)
-        g = genom1[:c1] + genom1[0][c2:]
+        g = genom1[:c1] + genom2[c2:]
         g = g[:self.gs.size() - 1]
         if len(g) < self.gs.size():
             g += self.gs.random_genom()[len(g):]
