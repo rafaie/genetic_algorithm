@@ -4,7 +4,7 @@ genetic_algorithm.py: the base genetic_algorithm class.
 """
 
 from genom_struct import GenomStruct
-from numpy import np
+import numpy as np
 import logging
 
 
@@ -48,9 +48,15 @@ class GeneticAlgorithm:
     def init_generation(self, init_population_size):
         self.logger.info('init_generation is started running')
 
-        population = []
-        for i in range(init_population_size):
-            population.append([self.gs.random_genom(), 0])
+        p = []
+        counter = 0
+        while counter < init_population_size:
+            d = self.gs.random_genom() + [0.0]
+            if d not in p:
+                p.append(d)
+                counter += 1
+
+        population = np.array(p)
 
         # if verbose is True:
         self.logger.info('initialize the genration with the size of {}'.
