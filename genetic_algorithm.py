@@ -100,7 +100,7 @@ class GeneticAlgorithm:
 
         return self.init_generation(init_population_size)
 
-    def evaluate_fitness(self, population, fitness, cuncurrency):
+    def evaluate_fitness(self, population, fitness, cuncurrency=1):
         for g in population:
             g[-1] = fitness(g)
 
@@ -125,7 +125,7 @@ class GeneticAlgorithm:
         return False
 
     def choose_best_population(self, population, population_size):
-        return population[population[:, -1].argsort()][:population_size]
+        return population[(-population[:, -1]).argsort()][:population_size]
 
     def tournament_selection(self, population):
         g = random.choice(population)
@@ -143,8 +143,8 @@ class GeneticAlgorithm:
         return g
 
     def gen_next_generation(self, population, population_size, mutation_rate,
-                            crossover_type, cuncurrency, fitness,
-                            fitness_goal):
+                            crossover_type, fitness, fitness_goal,
+                            cuncurrency=1):
         new_population = []
         while len(new_population) != population_size:
             parent1 = self.tournament_selection(population)
@@ -160,9 +160,9 @@ class GeneticAlgorithm:
         self.evaluate_fitness(population, fitness, cuncurrency)
         return new_population
 
-    def run(self, fitness, cuncurrency, init_population_size, population_size,
+    def run(self, fitness, init_population_size, population_size,
             mutation_rate, num_iteratitions, crossover_type, fitness_goal,
-            path=None):
+            cuncurrency=1, path=None):
 
         iteratition = 0
         population = self.init_ga(init_population_size, path)
@@ -177,8 +177,7 @@ class GeneticAlgorithm:
             population = self.gen_next_generation(population_size,
                                                   mutation_rate,
                                                   crossover_type,
-                                                  cuncurrency,
-                                                  fitness)
+                                                  fitness, cuncurrency)
 
             population = self.choose_best_population(population,
                                                      population_size)
