@@ -99,13 +99,31 @@ class GeneticAlgorithm:
         return self.init_generation(init_population_size)
 
     def calc_fitness(self, population, fitness, cuncurrency):
-        pass
+        for g in population:
+            g[-1] = fitness(g)
 
-    def check_stop_condition(self, population, num_iteratitions, iteratition):
-        pass
+        return population
+
+    def check_stop_condition(self, population, num_iteratitions, iteratition,
+                             fitness_goal):
+        self.logger.info('Check stop Condition')
+
+        if iteratition > num_iteratitions:
+            self.logger.info('Stop Condition: True. iteratitions>' +
+                             'num_iteratitions({}>{})'.format(num_iteratitions,
+                                                              iteratition))
+            return True
+
+        if population[0, -1] < fitness_goal:
+            self.logger.info('Stop Condition: True. Satisfied Fitness_goal!' +
+                             'population[0, -1] > fitness_goal' +
+                             '({}>{})'.format(population[0, -1], fitness_goal))
+            return True
+
+        return False
 
     def choose_best_population(self, population, population_size):
-        pass
+        return population[population[:, -1].argsort()][:population_size]
 
     def gen_next_generation(self, population_size, mutation_rate,
                             crossover_type, cuncurrency, fitness):
