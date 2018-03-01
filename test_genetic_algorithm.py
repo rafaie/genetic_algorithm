@@ -57,10 +57,10 @@ class GeneticAlgorithmTest(unittest.TestCase):
         return sum(g)
 
     def test_scenario1(self):
-        population = np.array([[1, 2, 3, 0],
-                               [4, 5, 6, 0],
-                               [7, 8, 9, 0],
-                               [10, 11, 12, 0]])
+        population = np.array([[1, 2, 3, 0, 0, 0],
+                               [4, 5, 6, 0, 0, 0],
+                               [7, 8, 9, 0, 0, 0],
+                               [10, 11, 12, 0, 0, 0]], dtype=np.float)
 
         self.ga.evaluate_fitness(population, GeneticAlgorithmTest.fitness)
         self.assertEqual(population[0][-1], 6)
@@ -74,3 +74,10 @@ class GeneticAlgorithmTest(unittest.TestCase):
 
         g = self.ga.tournament_selection(new_population)
         self.assertTrue(g in new_population)
+
+        g1 = self.ga.do_mutate(g)
+        diff = 0
+        for i in range(len(g)):
+            if g[1] != g1[1]:
+                diff += 1
+        self.assertTrue(diff <= 1)
