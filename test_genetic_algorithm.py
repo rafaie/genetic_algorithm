@@ -19,7 +19,7 @@ class GeneticAlgorithmTest(unittest.TestCase):
         self.path = 'sample_genom_struct.csv'
         self.ga = GeneticAlgorithm(self.path)
 
-    def test_functions(self):
+    def test_init_ga(self):
         init_population_size = 10
 
         population = self.ga.init_ga(init_population_size)
@@ -52,3 +52,17 @@ class GeneticAlgorithmTest(unittest.TestCase):
                                   g1, g2)
         # print(g3)
         self.assertEqual(len(g3), 6)
+
+    def fitness(g):
+        return sum(g)
+
+    def test_evaluate_fitness(self):
+        population = [[1, 2, 3, 0],
+                      [4, 5, 6, 0],
+                      [7, 8, 9, 0]]
+
+        self.ga.evaluate_fitness(population, GeneticAlgorithmTest.fitness)
+        self.assertEqual(population[0][-1], 6)
+        self.assertEqual(population[2][-1], 24)
+
+        # print(population)
