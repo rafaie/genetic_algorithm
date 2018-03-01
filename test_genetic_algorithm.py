@@ -71,3 +71,6 @@ class GeneticAlgorithmTest(unittest.TestCase):
         self.assertEqual(len(new_population), 3)
         self.assertEqual(new_population[0][-1], 33)
         self.assertEqual(new_population[1][-1], 24)
+
+        g = self.ga.tournament_selection(new_population)
+        self.assertTrue(g in new_population)

@@ -130,7 +130,7 @@ class GeneticAlgorithm:
     def tournament_selection(self, population):
         g = random.choice(population)
 
-        for i in (GeneticAlgorithm.TOURNAMENT_SIZE):
+        for i in range(GeneticAlgorithm.TOURNAMENT_SIZE):
             g1 = random.choice(population)
             if g1[-1] > g[-1]:
                 g = g1
