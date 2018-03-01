@@ -137,8 +137,8 @@ class GeneticAlgorithm:
 
         return g
 
-    def mutate(self, g, mutation_rate):
-        i = random.randint(self.gs.size())
+    def do_mutate(self, g):
+        i = random.randrange(self.gs.size())
         g[i] = self.gs.rand(i)
         return g
 
@@ -152,7 +152,7 @@ class GeneticAlgorithm:
 
             child = self.do_crossover(crossover_type, parent1, parent2)
             if random.uniform(0, 1) < mutation_rate:
-                child = self.do_mutate()
+                child = self.do_mutate(child)
 
                 if child not in new_population:
                     new_population.append(child)
