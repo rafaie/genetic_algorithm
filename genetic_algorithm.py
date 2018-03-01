@@ -22,6 +22,8 @@ class GeneticAlgorithm:
     CUT_SLICE_CROSSOVER = 2
     UNIFORM_CROSSOVER = 3
 
+    TOURNAMENT_SIZE = 3
+
     def __init__(self, path, log_level=None):
         self.path = path
         self.gs = GenomStruct(path)
@@ -98,7 +100,7 @@ class GeneticAlgorithm:
 
         return self.init_generation(init_population_size)
 
-    def calc_fitness(self, population, fitness, cuncurrency):
+    def evaluate_fitness(self, population, fitness, cuncurrency):
         for g in population:
             g[-1] = fitness(g)
 
@@ -125,12 +127,42 @@ class GeneticAlgorithm:
     def choose_best_population(self, population, population_size):
         return population[population[:, -1].argsort()][:population_size]
 
-    def gen_next_generation(self, population_size, mutation_rate,
-                            crossover_type, cuncurrency, fitness):
-        pass
+    def tournament_selection(self, population):
+        g = random.choice(population)
+
+        for i in (GeneticAlgorithm.TOURNAMENT_SIZE):
+            g1 = random.choice(population)
+            if g1[-1] > g[-1]:
+                g = g1
+
+        return g
+
+    def mutate(self, g, mutation_rate):
+        i = random.randint(self.gs.size())
+        g[i] = self.gs.rand(i)
+        return g
+
+    def gen_next_generation(self, population, population_size, mutation_rate,
+                            crossover_type, cuncurrency, fitness,
+                            fitness_goal):
+        new_population = []
+        while len(new_population) != population_size:
+            parent1 = self.tournament_selection(population)
+            parent2 = self.tournament_selection(population)
+
+            child = self.do_crossover(crossover_type, parent1, parent2)
+            if random.uniform(0, 1) < mutation_rate:
+                child = self.do_mutate()
+
+                if child not in new_population:
+                    new_population.append(child)
+
+        self.evaluate_fitness(population, fitness, cuncurrency)
+        return new_population
 
     def run(self, fitness, cuncurrency, init_population_size, population_size,
-            mutation_rate, num_iteratitions, crossover_type, path=None):
+            mutation_rate, num_iteratitions, crossover_type, fitness_goal,
+            path=None):
 
         iteratition = 0
         population = self.init_ga(init_population_size, path)
