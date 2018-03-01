@@ -56,13 +56,18 @@ class GeneticAlgorithmTest(unittest.TestCase):
     def fitness(g):
         return sum(g)
 
-    def test_evaluate_fitness(self):
-        population = [[1, 2, 3, 0],
-                      [4, 5, 6, 0],
-                      [7, 8, 9, 0]]
+    def test_scenario1(self):
+        population = np.array([[1, 2, 3, 0],
+                               [4, 5, 6, 0],
+                               [7, 8, 9, 0],
+                               [10, 11, 12, 0]])
 
         self.ga.evaluate_fitness(population, GeneticAlgorithmTest.fitness)
         self.assertEqual(population[0][-1], 6)
         self.assertEqual(population[2][-1], 24)
 
-        # print(population)
+        new_population = self.ga.choose_best_population(population, 3)
+        # print(new_population)
+        self.assertEqual(len(new_population), 3)
+        self.assertEqual(new_population[0][-1], 33)
+        self.assertEqual(new_population[1][-1], 24)
