@@ -174,11 +174,12 @@ class GeneticAlgorithm:
         while self.check_stop_condition(population, num_iteratitions,
                                         iteratition):
 
-            population = self.gen_next_generation(population_size,
-                                                  mutation_rate,
-                                                  crossover_type,
-                                                  fitness, cuncurrency)
+            new_population = self.gen_next_generation(population_size,
+                                                      mutation_rate,
+                                                      crossover_type,
+                                                      fitness, cuncurrency)
 
-            population = self.choose_best_population(population,
+            population = self.choose_best_population(population +
+                                                     new_population,
                                                      population_size)
         return population
