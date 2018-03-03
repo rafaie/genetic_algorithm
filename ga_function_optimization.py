@@ -26,5 +26,16 @@ if __name__ == "__main__":
     logging.config.dictConfig(yaml.load(open('logging.yaml')))
 
     path = 'sample_genom_struct.csv'
+    init_population_size = 10000
+    population_size = 100
+    mutation_rate = 0.15
+    num_iteratitions = 100
+    crossover_type = GeneticAlgorithm.TWO_POINT_CROSSOVER
+    fitness_goal = 0.00001
+
     ga = GeneticAlgorithm(path)
-    ga.init_ga(100)
+
+    population = ga.run(init_population_size, population_size,
+                        mutation_rate, num_iteratitions, crossover_type,
+                        calc_fitness, fitness_goal,
+                        cuncurrency=1)

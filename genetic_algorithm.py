@@ -143,7 +143,7 @@ class GeneticAlgorithm:
         return g
 
     def gen_next_generation(self, population, population_size, mutation_rate,
-                            crossover_type, fitness, fitness_goal,
+                            crossover_type, fitness_func, fitness_goal,
                             cuncurrency=1):
         new_population = []
         while len(new_population) != population_size:
@@ -157,16 +157,17 @@ class GeneticAlgorithm:
                 if child not in new_population:
                     new_population.append(child)
 
-        self.evaluate_fitness(population, fitness, cuncurrency)
+        self.evaluate_fitness(population, fitness_func, cuncurrency)
         return new_population
 
-    def run(self, fitness, init_population_size, population_size,
-            mutation_rate, num_iteratitions, crossover_type, fitness_goal,
+    def run(self, init_population_size, population_size,
+            mutation_rate, num_iteratitions, crossover_type,
+            fitness_func, fitness_goal,
             cuncurrency=1, path=None):
 
         iteratition = 0
         population = self.init_ga(init_population_size, path)
-        self.calc_fitness(population, fitness, cuncurrency)
+        self.calc_fitness(population, fitness_func, cuncurrency)
 
         population = self.choose_best_population(population,
                                                  population_size)
@@ -177,7 +178,9 @@ class GeneticAlgorithm:
             new_population = self.gen_next_generation(population_size,
                                                       mutation_rate,
                                                       crossover_type,
-                                                      fitness, cuncurrency)
+                                                      fitness_func,
+                                                      fitness_goal,
+                                                      cuncurrency)
 
             population = self.choose_best_population(population +
                                                      new_population,
