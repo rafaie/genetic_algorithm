@@ -11,9 +11,10 @@ __license__ = "APLv2"
 
 
 class ChromosomesStruct:
-    def __init__(self, name, min_value, max_value, floating_point,
+    def __init__(self, name, value, min_value, max_value, floating_point,
                  is_fixed=False):
         self.name = name
+        self.value = value
         self.min_value = min_value
         self.max_value = max_value
         self.floating_point = floating_point
@@ -42,14 +43,15 @@ class GenomStruct:
             for line in fi.readlines():
                 l = line.strip().split(',')
                 self.cs.append(ChromosomesStruct(l[0], float(l[1]),
-                                                 float(l[2]), int(l[3]),
-                                                 bool(int(l[4]))))
+                                                 float(l[2]),
+                                                 float(l[3]), int(l[4]),
+                                                 bool(int(l[5]))))
 
     def rand(self, i):
         cs_temp = self.cs[i]
 
         if cs_temp.is_fixed is True:
-            return None
+            return cs_temp.value
 
         return round(random.uniform(cs_temp.min_value, cs_temp.max_value),
                      cs_temp.floating_point)
@@ -65,3 +67,10 @@ class GenomStruct:
 
     def name(self):
         return [c.name for c in self.cs]
+
+    def rand_c_options(self):
+        l = []
+        for i, v in enumerate(self.cs):
+            if v.is_fixed is False:
+                l.append(i)
+        return l
