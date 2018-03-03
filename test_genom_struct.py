@@ -32,3 +32,21 @@ class GenomStructTest(unittest.TestCase):
         self.assertGreaterEqual(len(genom), len(gs.cs))
         self.assertGreaterEqual(genom[2], gs.cs[2].min_value)
         self.assertLessEqual(genom[4], gs.cs[4].max_value)
+
+    def test_genom_struct_fixed_value(self):
+        path = 'sample_genom_struct.csv'
+
+        gs = GenomStruct(path)
+        gs.cs[1].is_fixed = True
+
+        r = gs.rand(1)
+        self.assertEqual(r, gs.cs[1].value)
+
+        r = gs.rand(1)
+        self.assertEqual(r, gs.cs[1].value)
+
+        r = gs.random_genom()
+        self.assertEqual(r[1], gs.cs[1].value)
+
+        l = gs.rand_c_options()
+        self.assertTrue(1 not in l)
