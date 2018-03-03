@@ -88,7 +88,7 @@ class GeneticAlgorithm:
                 p.append(d)
                 counter += 1
 
-        population = np.array(p)
+        population = np.array(p, dtype=np.float64)
 
         self.logger.info('initialize the genration with the size of {}'.
                          format(len(population)))
@@ -104,12 +104,12 @@ class GeneticAlgorithm:
     def evaluate_fitness(self, population, fitness, cuncurrency=1):
         for g in population:
             g[-1] = fitness(g)
-
         return population
 
     def check_stop_condition(self, population, num_iteratitions, iteratition,
                              fitness_goal):
-        self.logger.info('Check stop Condition')
+        self.logger.info('Check stop Condition iterestion ' +
+                         '{}'.format(iteratition))
 
         if iteratition > num_iteratitions:
             self.logger.info('Stop Condition: True. iteratitions>' +
@@ -125,8 +125,11 @@ class GeneticAlgorithm:
 
         return True
 
-    def choose_best_population(self, population, population_size):
-        return population[(-population[:, -1]).argsort()][:population_size]
+    def choose_best_population(self, population, population_size,
+                               reverse=False):
+        if reverse is True:
+            return population[(-population[:, -1]).argsort()][:population_size]
+        return population[population[:, -1].argsort()][:population_size]
 
     def tournament_selection(self, population):
         g = random.choice(population)
@@ -139,7 +142,7 @@ class GeneticAlgorithm:
         return g
 
     def do_mutate(self, g):
-        i = random.randrange(self.gs.size())
+        i = random.choice(self.gs.rand_c_options())
         g[i] = self.gs.rand(i)
         return g
 
@@ -158,20 +161,21 @@ class GeneticAlgorithm:
                 if child not in new_population:
                     new_population.append(child)
 
-        self.evaluate_fitness(population, fitness_func, cuncurrency)
-        return new_population
+        self.evaluate_fitness(new_population, fitness_func, cuncurrency)
+        return np.array(new_population, dtype=np.float64)
 
     def run(self, init_population_size, population_size,
             mutation_rate, num_iteratitions, crossover_type,
             fitness_func, fitness_goal,
-            cuncurrency=1, path=None):
+            cuncurrency=1, reverse_fitness_order=False, path=None):
 
         iteratition = 0
         population = self.init_ga(init_population_size, path)
         self.evaluate_fitness(population, fitness_func, cuncurrency)
 
         population = self.choose_best_population(population,
-                                                 population_size)
+                                                 population_size,
+                                                 reverse_fitness_order)
 
         while self.check_stop_condition(population, num_iteratitions,
                                         iteratition, fitness_goal):
@@ -184,9 +188,10 @@ class GeneticAlgorithm:
                                                       fitness_goal,
                                                       cuncurrency)
 
-            population = self.choose_best_population(population +
-                                                     new_population,
-                                                     population_size)
+            population = np.concatenate((population, new_population), axis=0)
+            population = self.choose_best_population(population,
+                                                     population_size,
+                                                     reverse_fitness_order)
             iteratition += 1
 
         return population
