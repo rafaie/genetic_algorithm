@@ -30,8 +30,8 @@ class GeneticAlgorithmTest(unittest.TestCase):
         self.assertEqual(population[1, 5], 0)
 
     def test_crossovers(self):
-        g1 = [1, 2, 3, 4, 5, 0.0]
-        g2 = [15, 16, 17, 18, 19, 1.0]
+        g1 = np.array([1, 2, 3, 4, 5, 0.0])
+        g2 = np.array([15, 16, 17, 18, 19, 1.0])
 
         g3 = self.ga.do_crossover(GeneticAlgorithm.SINGLE_POINT_CROSSOVER,
                                   g1, g2)

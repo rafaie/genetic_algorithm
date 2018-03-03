@@ -43,20 +43,21 @@ class GeneticAlgorithm:
     # Cross Over functions
     def do_crossover_single_point(self, genom1, genom2):
         c = random.randint(1, self.gs.size() - 2)
-        return genom1[:c] + genom2[c:-1] + [0.0]
+        return list(genom1[:c]) + list(genom2[c:-1]) + [0.0]
 
     def do_crossover_two_point(self, genom1, genom2):
         if self.gs.size() <= 3:
-            return genom1[1] + genom2[2] + genom1[3] + [0.0]
+            return list(genom1[1]) + list(genom2[2]) + list(genom1[3]) + [0.0]
 
         c1 = random.randint(0, self.gs.size() - 2)
         c2 = random.randint(c1, self.gs.size() - 1)
-        return genom1[:c1] + genom2[c1:c2] + genom1[c2:-1] + [0.0]
+        return list(genom1[:c1]) + list(genom2[c1:c2]) + list(genom1[c2:-1]) \
+            + [0.0]
 
     def do_crossover_cut_slice(self, genom1, genom2):
         c1 = random.randrange(0, self.gs.size() - 1)
         c2 = random.randrange(0, self.gs.size() - 1)
-        g = genom1[:c1] + genom2[c2:]
+        g = list(genom1[:c1]) + list(genom2[c2:])
         g = g[:self.gs.size() - 1]
         if len(g) < self.gs.size():
             g += self.gs.random_genom()[len(g):]
@@ -114,15 +115,15 @@ class GeneticAlgorithm:
             self.logger.info('Stop Condition: True. iteratitions>' +
                              'num_iteratitions({}>{})'.format(num_iteratitions,
                                                               iteratition))
-            return True
+            return False
 
         if population[0, -1] < fitness_goal:
             self.logger.info('Stop Condition: True. Satisfied Fitness_goal!' +
                              'population[0, -1] > fitness_goal' +
                              '({}>{})'.format(population[0, -1], fitness_goal))
-            return True
+            return False
 
-        return False
+        return True
 
     def choose_best_population(self, population, population_size):
         return population[(-population[:, -1]).argsort()][:population_size]
@@ -167,15 +168,16 @@ class GeneticAlgorithm:
 
         iteratition = 0
         population = self.init_ga(init_population_size, path)
-        self.calc_fitness(population, fitness_func, cuncurrency)
+        self.evaluate_fitness(population, fitness_func, cuncurrency)
 
         population = self.choose_best_population(population,
                                                  population_size)
 
         while self.check_stop_condition(population, num_iteratitions,
-                                        iteratition):
+                                        iteratition, fitness_goal):
 
-            new_population = self.gen_next_generation(population_size,
+            new_population = self.gen_next_generation(population,
+                                                      population_size,
                                                       mutation_rate,
                                                       crossover_type,
                                                       fitness_func,
@@ -185,4 +187,6 @@ class GeneticAlgorithm:
             population = self.choose_best_population(population +
                                                      new_population,
                                                      population_size)
+            iteratition += 1
+
         return population
