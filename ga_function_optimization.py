@@ -18,8 +18,9 @@ B = 1
 
 
 # Using inverse function for fitness 1/F(x)
-def calc_fitness(self, genom):
-    return 1/(sum([v * genom[i] for i, v in enumerate(FUNCTION)]) + B)
+def calc_fitness(genom):
+    return 1/abs(sum([v * genom[i] for i, v in
+                 enumerate(FUNCTION)]) + B)
 
 
 if __name__ == "__main__":
@@ -39,3 +40,6 @@ if __name__ == "__main__":
                         mutation_rate, num_iteratitions, crossover_type,
                         calc_fitness, fitness_goal,
                         cuncurrency=1)
+
+    print(population[:3].astype(float))
+    print(population[:, -1].astype(float))
