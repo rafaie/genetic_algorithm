@@ -3,11 +3,15 @@ genetic_algorithm.py: the base genetic_algorithm class.
 
 """
 
-from genom_struct import GenomStruct
 import numpy as np
 import multiprocessing as mp
 import logging
 import random
+
+if __package__ is '':
+    from genom_struct import GenomStruct
+else:
+    from .genom_struct import GenomStruct
 
 
 __author__ = "Mostafa Rafaie"
