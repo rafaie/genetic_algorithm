@@ -5,6 +5,7 @@ genetic_algorithm.py: the base genetic_algorithm class.
 
 from genom_struct import GenomStruct
 import numpy as np
+import multiprocessing as mp
 import logging
 import random
 
@@ -101,10 +102,22 @@ class GeneticAlgorithm:
 
         return self.init_generation(init_population_size)
 
-    def evaluate_fitness(self, population, fitness, cuncurrency=1):
+    def evaluate_fitness_partial(self, population, fitness):
         for g in population:
             g[-1] = fitness(g)
         return population
+
+    def evaluate_fitness(self, population, fitness, cuncurrency=1):
+        # for g in population:
+        #     g[-1] = fitness(g)
+        sub_p = np.split(population, cuncurrency)
+        pool = mp.Pool(processes=cuncurrency)
+        results = [pool.apply_async(self.evaluate_fitness_partial,
+                                    args=(sub_p[i], fitness))
+                   for i in range(cuncurrency)]
+
+        output = [p.get() for p in results]
+        return np.concatenate(output)
 
     def check_stop_condition(self, population, num_iteratitions, iteratition,
                              fitness_goal):
