@@ -102,21 +102,21 @@ class GeneticAlgorithm:
 
         return self.init_generation(init_population_size)
 
-    def evaluate_fitness_partial(self, population, fitness):
+    def evaluate_fitness_partial(population, fitness):
         for g in population:
             g[-1] = fitness(g)
         return population
 
     def evaluate_fitness(self, population, fitness, cuncurrency=1):
-        # for g in population:
-        #     g[-1] = fitness(g)
         sub_p = np.split(population, cuncurrency)
         pool = mp.Pool(processes=cuncurrency)
-        results = [pool.apply_async(self.evaluate_fitness_partial,
+        results = [pool.apply_async(GeneticAlgorithm.evaluate_fitness_partial,
                                     args=(sub_p[i], fitness))
                    for i in range(cuncurrency)]
 
         output = [p.get() for p in results]
+        pool.close()
+
         return np.concatenate(output)
 
     def check_stop_condition(self, population, num_iteratitions, iteratition,
@@ -162,8 +162,8 @@ class GeneticAlgorithm:
     def gen_next_generation(self, population, population_size, mutation_rate,
                             crossover_type, fitness_func, fitness_goal,
                             cuncurrency=1):
-        new_population = []
-        while len(new_population) != population_size:
+        new_p = []
+        while len(new_p) != population_size:
             parent1 = self.tournament_selection(population)
             parent2 = self.tournament_selection(population)
 
@@ -171,11 +171,13 @@ class GeneticAlgorithm:
             if random.uniform(0, 1) < mutation_rate:
                 child = self.do_mutate(child)
 
-                if child not in new_population:
-                    new_population.append(child)
+                if child not in new_p:
+                    new_p.append(child)
 
-        self.evaluate_fitness(new_population, fitness_func, cuncurrency)
-        return np.array(new_population, dtype=np.float64)
+        new_population = np.array(new_p, dtype=np.float64)
+        new_population = self.evaluate_fitness(new_population, fitness_func,
+                                               cuncurrency)
+        return new_population
 
     def run(self, init_population_size, population_size,
             mutation_rate, num_iteratitions, crossover_type,
@@ -184,7 +186,8 @@ class GeneticAlgorithm:
 
         iteratition = 0
         population = self.init_ga(init_population_size, path)
-        self.evaluate_fitness(population, fitness_func, cuncurrency)
+        population = self.evaluate_fitness(population, fitness_func,
+                                           cuncurrency)
 
         population = self.choose_best_population(population,
                                                  population_size,
