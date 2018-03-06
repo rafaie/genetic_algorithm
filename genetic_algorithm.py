@@ -32,7 +32,8 @@ class GeneticAlgorithm:
     def __init__(self, path, log_level=None):
         self.path = path
         self.gs = GenomStruct(path)
-        self.logger = logging.getLogger(__name__)
+        self.logger = logging.getLogger(GeneticAlgorithm.LOGGER_HANDLER_NAME)
+        self.log_level = log_level
         if log_level is not None:
             self.logger.setLevel(log_level)
 
@@ -106,20 +107,28 @@ class GeneticAlgorithm:
 
         return self.init_generation(init_population_size)
 
-    def evaluate_fitness_partial(population, fitness):
+    def evaluate_fitness_partial(population, fitness, log_level):
+        logger = logging.getLogger(GeneticAlgorithm.LOGGER_HANDLER_NAME)
+        log_level = log_level
+        logger.info('Start evaluating the partial fitness function ' +
+                    'for population (size = {})'.format(len(population)))
+
         for g in population:
             g[-1] = fitness(g)
         return population
 
     def evaluate_fitness(self, population, fitness, cuncurrency=1):
+        self.logger.info('Start evaluating the fitness function')
         sub_p = np.split(population, cuncurrency)
         pool = mp.Pool(processes=cuncurrency)
         results = [pool.apply_async(GeneticAlgorithm.evaluate_fitness_partial,
-                                    args=(sub_p[i], fitness))
+                                    args=(sub_p[i], fitness, self.log_level))
                    for i in range(cuncurrency)]
 
         output = [p.get() for p in results]
         pool.close()
+
+        self.logger.info('Finish evaluating the fitness function')
 
         return np.concatenate(output)
 
@@ -166,6 +175,8 @@ class GeneticAlgorithm:
     def gen_next_generation(self, population, population_size, mutation_rate,
                             crossover_type, fitness_func, fitness_goal,
                             cuncurrency=1):
+        self.logger.info('Generate the next generation')
+
         new_p = []
         while len(new_p) != population_size:
             parent1 = self.tournament_selection(population)
@@ -188,7 +199,7 @@ class GeneticAlgorithm:
             fitness_func, fitness_goal,
             cuncurrency=1, reverse_fitness_order=False, path=None):
 
-        iteratition = 0
+        iteratition = 1
         population = self.init_ga(init_population_size, path)
         population = self.evaluate_fitness(population, fitness_func,
                                            cuncurrency)
@@ -199,6 +210,7 @@ class GeneticAlgorithm:
 
         while self.check_stop_condition(population, num_iteratitions,
                                         iteratition, fitness_goal):
+            self.logger.info('start iteration "{}" '.format(iteratition))
 
             new_population = self.gen_next_generation(population,
                                                       population_size,
