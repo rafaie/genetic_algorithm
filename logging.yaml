@@ -29,7 +29,7 @@ handlers:
 loggers:
   GA_LOG_HANDLER:
     level: DEBUG
-    handlers: [file, error_file]
+    handlers: [console, file, error_file]
     propagate: no
 
 
