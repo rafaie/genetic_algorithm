@@ -119,7 +119,7 @@ class GeneticAlgorithm:
 
     def evaluate_fitness(self, population, fitness, cuncurrency=1):
         self.logger.info('Start evaluating the fitness function')
-        sub_p = np.split(population, cuncurrency)
+        sub_p = np.array_split(population, cuncurrency)
         pool = mp.Pool(processes=cuncurrency)
         results = [pool.apply_async(GeneticAlgorithm.evaluate_fitness_partial,
                                     args=(sub_p[i], fitness, self.log_level))
