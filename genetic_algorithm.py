@@ -227,7 +227,8 @@ class GeneticAlgorithm:
             iteratition += 1
             self.logger.info('population[:3].astype(float) : ' +
                              '{}'.format(population[:3].astype(float)))
-            self.logger.info('population[:, -1].astype(float) : ' +
-                             '{}'.format(population[:, -1].astype(float)))
+            self.logger.info('fitness_value,{},{}'
+                             .format(iteratition, ','.join(population[:, -1]
+                                                           .astype(str))))
 
         return population
