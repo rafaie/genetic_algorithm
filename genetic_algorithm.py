@@ -225,5 +225,9 @@ class GeneticAlgorithm:
                                                      population_size,
                                                      reverse_fitness_order)
             iteratition += 1
+            self.logger.info('population[:3].astype(float) : ' +
+                             '{}'.format(population[:3].astype(float)))
+            self.logger.info('population[:, -1].astype(float) : ' +
+                             '{}'.format(population[:, -1].astype(float)))
 
         return population
