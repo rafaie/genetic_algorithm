@@ -133,7 +133,7 @@ class GeneticAlgorithm:
         return np.concatenate(output)
 
     def check_stop_condition(self, population, num_iteratitions, iteratition,
-                             fitness_goal):
+                             fitness_goal, reverse_fitness_order):
         self.logger.info('Check stop Condition iterestion ' +
                          '{}'.format(iteratition))
 
@@ -143,7 +143,15 @@ class GeneticAlgorithm:
                                                               iteratition))
             return False
 
-        if population[0, -1] < fitness_goal:
+        if population[0, -1] < fitness_goal and \
+           reverse_fitness_order is False:
+            self.logger.info('Stop Condition: True. Satisfied Fitness_goal!' +
+                             'population[0, -1] < fitness_goal' +
+                             '({}<{})'.format(population[0, -1], fitness_goal))
+            return False
+
+        if population[0, -1] > fitness_goal and \
+           reverse_fitness_order is True:
             self.logger.info('Stop Condition: True. Satisfied Fitness_goal!' +
                              'population[0, -1] > fitness_goal' +
                              '({}>{})'.format(population[0, -1], fitness_goal))
@@ -209,7 +217,8 @@ class GeneticAlgorithm:
                                                  reverse_fitness_order)
 
         while self.check_stop_condition(population, num_iteratitions,
-                                        iteratition, fitness_goal):
+                                        iteratition, fitness_goal,
+                                        reverse_fitness_order):
             self.logger.info('start iteration "{}" '.format(iteratition))
 
             new_population = self.gen_next_generation(population,
