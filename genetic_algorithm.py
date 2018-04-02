@@ -7,6 +7,7 @@ import numpy as np
 import multiprocessing as mp
 import logging
 import random
+import os
 
 if __package__ is '':
     from genom_struct import GenomStruct
@@ -202,13 +203,30 @@ class GeneticAlgorithm:
                                                cuncurrency)
         return new_population
 
+    def reload_np_population(self, population, population_size,
+                             population_np_path, reload_np_population_rate):
+        if os.path.isfile(population_np_path) is not True:
+            return population
+
+        p = np.load(population_np_path)
+        n = min(int(reload_np_population_rate * population_size), len(p))
+        return np.concatenate((population, p[:n]), axis=0)
+
     def run(self, init_population_size, population_size,
             mutation_rate, num_iteratitions, crossover_type,
             fitness_func, fitness_goal,
-            cuncurrency=1, reverse_fitness_order=False, path=None):
+            cuncurrency=1, reverse_fitness_order=False, path=None,
+            population_np_path=None, reload_np_population_rate=0.1):
 
         iteratition = 1
         population = self.init_ga(init_population_size, path)
+
+        if population_np_path is not None:
+            population = self.reload_np_population(population,
+                                                   population_size,
+                                                   population_np_path,
+                                                   reload_np_population_rate)
+
         population = self.evaluate_fitness(population, fitness_func,
                                            cuncurrency)
 
