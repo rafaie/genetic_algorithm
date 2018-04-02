@@ -210,6 +210,11 @@ class GeneticAlgorithm:
 
         p = np.load(population_np_path)
         n = min(int(reload_np_population_rate * population_size), len(p))
+        self.logger.info('reload_np_population ' +
+                         'file "{}", '.format(population_np_path) +
+                         'rate = {}, '.format(reload_np_population_rate) +
+                         ', count = {}'.format(n))
+
         return np.concatenate((population, p[:n]), axis=0)
 
     def run(self, init_population_size, population_size,
