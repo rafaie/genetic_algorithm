@@ -65,9 +65,11 @@ class GeneticAlgorithm:
         c1 = random.randrange(0, self.gs.size() - 1)
         c2 = random.randrange(0, self.gs.size() - 1)
         g = list(genom1[:c1]) + list(genom2[c2:])
-        g = g[:self.gs.size() - 1]
+        g = g[:self.gs.size()]
+        print(len(g), g)
         if len(g) < self.gs.size():
             g += self.gs.random_genom()[len(g):]
+
         return g + [0.0]
 
     def do_crossover_uniform(self, genom1, genom2):
